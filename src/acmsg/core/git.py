@@ -67,6 +67,8 @@ class GitUtils:
                 ["git", "diff", "--cached", "--name-status"],
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 check=True,
             )
             return output.stdout.strip().replace("\t", " ")
@@ -84,7 +86,7 @@ class GitUtils:
         """
         try:
             output = subprocess.run(
-                ["git", "diff", "--cached"], capture_output=True, text=True, check=True
+                ["git", "diff", "--cached"], capture_output=True, text=True, encoding="utf-8", errors="replace", check=True
             )
             return output.stdout.strip()
         except subprocess.CalledProcessError as e:
