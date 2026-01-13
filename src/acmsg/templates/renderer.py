@@ -27,17 +27,18 @@ class TemplateRenderer:
         """Render the system prompt template."""
         return self._system_prompt_template.render()
 
-    def render_user_prompt(self, status: str, diff: str) -> str:
+    def render_user_prompt(self, status: str, diff: str, use_emojis: bool = False) -> str:
         """Render the user prompt template with git status and diff.
 
         Args:
             status: Output of git status command
             diff: Output of git diff command
+            use_emojis: Whether to enable emoji support
 
         Returns:
             Rendered user prompt template
         """
-        return self._user_prompt_template.render(status=status, diff=diff)
+        return self._user_prompt_template.render(status=status, diff=diff, use_emojis=use_emojis)
 
     def render_config_template(self) -> str:
         """Render the configuration template.

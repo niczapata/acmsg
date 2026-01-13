@@ -5,7 +5,7 @@ import yaml
 from pathlib import Path
 from typing import Optional, Any
 
-from ..constants import DEFAULT_MODEL, DEFAULT_TEMPERATURE, CONFIG_FILENAME, CONFIG_DIR
+from ..constants import DEFAULT_MODEL, DEFAULT_TEMPERATURE, DEFAULT_USE_EMOJIS, CONFIG_FILENAME, CONFIG_DIR
 from ..exceptions import ConfigError
 from ..templates import renderer
 
@@ -17,6 +17,7 @@ class Config:
         """Initialize the Config instance with configuration values."""
         self._default_model = DEFAULT_MODEL
         self._default_temperature = DEFAULT_TEMPERATURE
+        self._default_use_emojis = DEFAULT_USE_EMOJIS
         self._config_file = self._init_config_file()
         self._load_config()
 
@@ -49,6 +50,7 @@ class Config:
             self._temperature = (
                 self._validate_temperature(temp_value) or self._default_temperature
             )
+            self._use_emojis = data.get("use_emojis") if data.get("use_emojis") is not None else self._default_use_emojis
 
             self._api_token = data.get("api_token")
         except Exception as e:
@@ -104,6 +106,15 @@ class Config:
         return self._api_token
 
     @property
+    def use_emojis(self) -> bool:
+        """Get the configured emoji support setting.
+
+        Returns:
+            Boolean indicating if emoji support is enabled
+        """
+        return self._use_emojis
+
+    @property
     def config_file(self) -> Path:
         """Get the path to the configuration file.
 
@@ -135,6 +146,11 @@ class Config:
                 self._model = value
             elif parameter == "temperature":
                 self._temperature = self._validate_temperature(value)
+            elif parameter == "use_emojis":
+                if isinstance(value, str):
+                    self._use_emojis = value.lower() in ("true", "yes", "1", "on")
+                else:
+                    self._use_emojis = bool(value)
             elif parameter == "api_token":
                 self._api_token = value
         except Exception as e:

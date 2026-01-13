@@ -39,6 +39,17 @@ def create_parser() -> argparse.ArgumentParser:
         type=float,
         help="specify the temperature for the AI model (overrides config)",
     )
+    commit_parser.add_argument(
+        "--use-emojis",
+        action="store_true",
+        help="enable emoji prefixes in commit messages (overrides config)",
+    )
+    commit_parser.add_argument(
+        "--no-use-emojis",
+        action="store_false",
+        dest="use_emojis",
+        help="disable emoji prefixes in commit messages (overrides config)",
+    )
 
     # Config command parser
     config_parser = subparsers.add_parser(
@@ -57,7 +68,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
     config_set.add_argument(
         "parameter",
-        choices=["api_token", "model", "temperature"],
+        choices=["api_token", "model", "temperature", "use_emojis"],
         help="parameter name",
     )
     config_set.add_argument("value", type=str, help="Value")
@@ -70,7 +81,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
     config_get.add_argument(
         "parameter",
-        choices=["api_token", "model", "temperature"],
+        choices=["api_token", "model", "temperature", "use_emojis"],
         help="parameter name",
     )
 

@@ -8,13 +8,14 @@ from ..templates import renderer
 class CommitMessageGenerator:
     """Generate commit messages from git changes."""
 
-    def __init__(self, api_token: str, model: str, temperature: float):
+    def __init__(self, api_token: str, model: str, temperature: float, use_emojis: bool = False):
         """Initialize the commit message generator.
 
         Args:
             api_token: OpenRouter API token
             model: Model ID to use for generation
             temperature: Temperature to use for generation
+            use_emojis: Whether to enable emoji support
         """
         if not api_token:
             raise AcmsgError("API token is required")
@@ -22,6 +23,7 @@ class CommitMessageGenerator:
         self._api_client = OpenRouterClient(api_token)
         self._model = model
         self._temperature = temperature
+        self._use_emojis = use_emojis
 
     def generate(self, git_status: str, git_diff: str) -> str:
         """Generate a commit message from git status and diff.
@@ -37,7 +39,7 @@ class CommitMessageGenerator:
             AcmsgError: If the generation fails
         """
         system_prompt = renderer.render_system_prompt()
-        user_prompt = renderer.render_user_prompt(status=git_status, diff=git_diff)
+        user_prompt = renderer.render_user_prompt(status=git_status, diff=git_diff, use_emojis=self._use_emojis)
 
         return self._api_client.generate_completion(
             model=self._model,

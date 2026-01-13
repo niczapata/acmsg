@@ -6,3 +6,6 @@ api_token: # Required
 
 # Optionally, set the temperature:
 # temperature: 0.8 # default
+
+# Optionally, enable emoji prefixes in commit messages:
+# use_emojis: false # default

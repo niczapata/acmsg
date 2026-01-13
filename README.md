@@ -11,6 +11,8 @@ through the OpenRouter API.
 - Analyzes staged changes in your git repository
 - Generates contextual commit messages using AI
 - Supports multiple AI models via [OpenRouter](https://openrouter.ai)
+- Configurable AI model and temperature settings
+- Optional emoji prefixes in commit messages
 - Optionally edit generated commit message
 - Automatically commits changes with generated message, if confirmed
 
@@ -56,20 +58,34 @@ $ acmsg config set api_token <your_api_token>
 
 ## Usage
 
+### Commit
+
+```bash
+acmsg commit
 ```
-usage: acmsg [-h] [--version] {commit,config} ...
 
-Automated commit message generator
+Generate a commit message for staged changes.
 
-positional arguments:
-  {commit,config}  Commands
-    commit         generate a commit message
-    config         manage configuration settings
+Options:
+- `--model MODEL`: Specify the AI model (overrides config)
+- `--temperature TEMP`: Set model temperature (0.0-2.0, overrides config)
+- `--use-emojis`: Enable emoji prefixes in commit messages
+- `--no-use-emojis`: Disable emoji prefixes in commit messages
 
-options:
-  -h, --help       show this help message and exit
-  --version        display the program version and exit
+### Config
+
+```bash
+acmsg config set <parameter> <value>
+acmsg config get <parameter>
 ```
+
+Manage configuration settings.
+
+Available parameters:
+- `api_token`: OpenRouter API key
+- `model`: AI model to use (default: qwen/qwen3-30b-a3b:free)
+- `temperature`: Model temperature (0.0-2.0, default: 0.8)
+- `use_emojis`: Enable emoji prefixes (true/false, default: false)
 
 ## License
 

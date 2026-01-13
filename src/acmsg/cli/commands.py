@@ -137,14 +137,14 @@ def ensure_api_token_configured(config):
     return api_token
 
 
-def generate_commit_message(repo, api_token, model, temperature):
+def generate_commit_message(repo, api_token, model, temperature, use_emojis):
     """Generate a commit message and return it formatted."""
     stop_spinner = threading.Event()
     spinner_thread = threading.Thread(target=spinner, args=(stop_spinner,))
     spinner_thread.start()
 
     try:
-        generator = CommitMessageGenerator(api_token, model, temperature)
+        generator = CommitMessageGenerator(api_token, model, temperature, use_emojis)
         message = generator.generate(repo.files_status, repo.diff)
     finally:
         stop_spinner.set()
@@ -173,13 +173,14 @@ def handle_commit(args: Any) -> None:
         api_token = ensure_api_token_configured(cfg)
         model = args.model or cfg.model
         temperature = args.temperature or cfg.temperature
+        use_emojis = args.use_emojis if hasattr(args, "use_emojis") and args.use_emojis is not None else cfg.use_emojis
 
         repo = GitUtils()
         if not repo.files_status or not repo.diff:
             print(Fore.YELLOW + "Nothing to commit." + Style.RESET_ALL)
             sys.exit(1)
 
-        formatted_message = generate_commit_message(repo, api_token, model, temperature)
+        formatted_message = generate_commit_message(repo, api_token, model, temperature, use_emojis)
         print_message(formatted_message)
 
         while True:
@@ -226,6 +227,8 @@ def handle_config(args: Any) -> None:
                     print(cfg._default_model)
                 elif args.parameter == "temperature":
                     print(cfg._default_temperature)
+                elif args.parameter == "use_emojis":
+                    print(cfg._default_use_emojis)
                 elif args.parameter == "api_token":
                     print(f"{Fore.YELLOW}API token not set.{Style.RESET_ALL}")
     except ConfigError as e:
